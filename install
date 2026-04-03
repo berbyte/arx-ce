@@ -1,0 +1,254 @@
+#!/usr/bin/env bash
+# Install arx-hook and arx-dashboard from GitHub releases (GoReleaser archives).
+#
+# Linux / macOS:
+#   curl -fsSL https://get.arx.ber.run/install | bash
+#
+# Environment (optional):
+#   ARX_REPO              GitHub repo as owner/name (default: berbyte/arx-installer)
+#   ARX_VERSION           Release tag or bare semver (e.g. v1.2.3 or 1.2.3). Default: latest release.
+#   ARX_BIN_DIR           Install directory. If unset, tries $HOME/.local/bin then $HOME/bin, then the
+#                         first writable absolute directory already on your PATH.
+#   ARX_POST_INSTALL      If set, run after install: words become extra args (e.g. "install cursor").
+#   ARX_GITHUB_API         Override GitHub API base (default: https://api.github.com)
+#
+# Requires: curl, tar, mkdir, chmod, jq
+
+set -euo pipefail
+
+ARX_REPO="${ARX_REPO:-berbyte/arx-installer}"
+# Set if user exported ARX_BIN_DIR (even empty); used to avoid overriding an explicit choice.
+if [ -n "${ARX_BIN_DIR+x}" ]; then
+  ARX_BIN_DIR_SET_BY_USER=1
+else
+  ARX_BIN_DIR_SET_BY_USER=0
+fi
+ARX_BIN_DIR="${ARX_BIN_DIR:-$HOME/.local/bin}"
+ARX_GITHUB_API="${ARX_GITHUB_API:-https://api.github.com}"
+
+need_cmd() {
+  command -v "$1" >/dev/null 2>&1 || {
+    echo "arx-hook install: required command not found: $1" >&2
+    exit 1
+  }
+}
+
+# First writable absolute directory on PATH (left to right). Skips empty, relative, and common system roots.
+first_writable_path_dir() {
+  local IFS=':' p
+  for p in $PATH; do
+    [[ -z "$p" || "$p" == "." ]] && continue
+    p="${p%/}"
+    [[ "$p" != /* ]] && continue
+    case "$p" in
+    /bin | /sbin | /usr/bin | /usr/sbin | /usr/ucb | /) continue ;;
+    esac
+    if [[ "$p" == '~'* ]]; then
+      p="${HOME}${p:1}"
+    fi
+    if [[ -d "$p" && -w "$p" ]]; then
+      printf '%s\n' "$p"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# If ARX_BIN_DIR was not set by the user: prefer home bin dirs, else any writable dir on PATH.
+resolve_install_dir() {
+  if [[ "$ARX_BIN_DIR_SET_BY_USER" -eq 1 ]]; then
+    return 0
+  fi
+  local d picked
+  for d in "${HOME}/.local/bin" "${HOME}/bin"; do
+    if mkdir -p "$d" 2>/dev/null && [[ -d "$d" && -w "$d" ]]; then
+      ARX_BIN_DIR="$d"
+      return 0
+    fi
+  done
+  if picked="$(first_writable_path_dir)"; then
+    ARX_BIN_DIR="$picked"
+    echo "arx-hook install: using ${ARX_BIN_DIR} (writable directory on your PATH)." >&2
+    return 0
+  fi
+  echo "arx-hook install: no writable install directory found; set ARX_BIN_DIR." >&2
+  exit 1
+}
+
+semver_file() {
+  local v="$1"
+  echo "${v#[vV]}"
+}
+
+ensure_tag() {
+  local v="$1"
+  if [[ "$v" == [vV]* ]]; then
+    echo "$v"
+  else
+    echo "v${v}"
+  fi
+}
+
+detect_os() {
+  case "$(uname -s)" in
+  Linux*) echo linux ;;
+  Darwin*) echo darwin ;;
+  *)
+    echo "arx-hook install: unsupported OS (need Linux or macOS): $(uname -s)" >&2
+    exit 1
+    ;;
+  esac
+}
+
+detect_arch() {
+  case "$(uname -m)" in
+  x86_64 | amd64) echo amd64 ;;
+  aarch64 | arm64) echo arm64 ;;
+  *)
+    echo "arx-hook install: unsupported CPU: $(uname -m)" >&2
+    exit 1
+    ;;
+  esac
+}
+
+# Bundle name: arx-hook_<semver>_<os>_<arch>.tar.gz (GoReleaser name_template, project_name arx-hook)
+bundle_url_from_release() {
+  local json="$1" os="$2" arch="$3" exact="${4:-}"
+  need_cmd jq
+  if [[ -n "$exact" ]]; then
+    jq -r --arg n "$exact" '.assets[] | select(.name == $n) | .browser_download_url' <<<"$json" | head -n1
+  else
+    jq -r --arg sfx "_${os}_${arch}.tar.gz" \
+      '.assets[] | select(.name | startswith("arx-hook_") and endswith($sfx)) | .browser_download_url' \
+      <<<"$json" | head -n1
+  fi
+}
+
+bundle_url_from_releases_page() {
+  local json="$1" asset="$2"
+  need_cmd jq
+  jq -r --arg n "$asset" '.[] | .assets[] | select(.name == $n) | .browser_download_url' <<<"$json" | head -n1
+}
+
+github_get() {
+  local path="$1"
+  curl -fsSL \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    "${ARX_GITHUB_API}${path}"
+}
+
+resolve_latest_bundle_url() {
+  local os="$1" arch="$2"
+  need_cmd curl
+  local json url
+  json="$(github_get "/repos/${ARX_REPO}/releases/latest")"
+  url="$(bundle_url_from_release "$json" "$os" "$arch")"
+  if [[ -z "$url" ]]; then
+    echo "arx-hook install: no arx-hook_*_${os}_${arch}.tar.gz in latest release for ${ARX_REPO}" >&2
+    exit 1
+  fi
+  printf '%s\n' "$url"
+}
+
+resolve_pinned_bundle_url() {
+  local ver="$1" os="$2" arch="$3"
+  local tag asset json url=""
+  tag="$(ensure_tag "$ver")"
+  asset="arx-hook_${ver}_${os}_${arch}.tar.gz"
+
+  need_cmd curl
+  if json="$(github_get "/repos/${ARX_REPO}/releases/tags/${tag}" 2>/dev/null)"; then
+    url="$(bundle_url_from_release "$json" "$os" "$arch" "$asset")"
+  fi
+  if [[ -z "$url" ]]; then
+    local page=1
+    while true; do
+      json="$(github_get "/repos/${ARX_REPO}/releases?per_page=100&page=${page}")"
+      url="$(bundle_url_from_releases_page "$json" "$asset")"
+      if [[ -n "$url" ]]; then
+        break
+      fi
+      local count
+      count="$(jq 'length' <<<"$json")"
+      if [[ "$count" -lt 100 ]]; then
+        break
+      fi
+      page=$((page + 1))
+    done
+  fi
+  if [[ -z "$url" ]]; then
+    echo "arx-hook install: could not find asset ${asset} in releases for ${ARX_REPO}" >&2
+    exit 1
+  fi
+  printf '%s\n' "$url"
+}
+
+find_in_tree() {
+  local root="$1" base="$2"
+  if [[ -f "${root}/${base}" ]]; then
+    printf '%s\n' "${root}/${base}"
+    return 0
+  fi
+  find "$root" -type f -name "$base" | head -n1
+}
+
+main() {
+  need_cmd mkdir
+  need_cmd chmod
+  need_cmd jq
+  need_cmd tar
+
+  resolve_install_dir
+
+  local os arch
+  os="$(detect_os)"
+  arch="$(detect_arch)"
+
+  local ver url
+  if [[ -n "${ARX_VERSION:-}" ]]; then
+    ver="$(semver_file "$ARX_VERSION")"
+    url="$(resolve_pinned_bundle_url "$ver" "$os" "$arch")"
+  else
+    url="$(resolve_latest_bundle_url "$os" "$arch")"
+  fi
+
+  local tmpdir
+  tmpdir="$(mktemp -d)"
+  trap 'rm -rf "$tmpdir"' EXIT
+
+  echo "Downloading bundle ..."
+  curl -fL --retry 3 --retry-delay 1 -o "${tmpdir}/bundle.tar.gz" "$url"
+
+  mkdir -p "$ARX_BIN_DIR"
+  tar -xzf "${tmpdir}/bundle.tar.gz" -C "$tmpdir"
+
+  local hook_src dash_src
+  hook_src="$(find_in_tree "$tmpdir" arx-hook)"
+  dash_src="$(find_in_tree "$tmpdir" arx-dashboard)"
+  if [[ -z "$hook_src" || ! -f "$hook_src" ]]; then
+    echo "arx-hook install: expected arx-hook not found in archive" >&2
+    exit 1
+  fi
+  if [[ -z "$dash_src" || ! -f "$dash_src" ]]; then
+    echo "arx-hook install: expected arx-dashboard not found in archive" >&2
+    exit 1
+  fi
+
+  local dest_hook="${ARX_BIN_DIR}/arx-hook"
+  local dest_dash="${ARX_BIN_DIR}/arx-dashboard"
+  mv "$hook_src" "$dest_hook"
+  mv "$dash_src" "$dest_dash"
+  chmod +x "$dest_hook" "$dest_dash"
+
+  echo "Installed: $dest_hook"
+  echo "Installed: $dest_dash"
+
+  if [[ -n "${ARX_POST_INSTALL:-}" ]]; then
+    read -r -a post_args <<<"$ARX_POST_INSTALL"
+    echo "Running: $dest_hook ${post_args[*]}"
+    "$dest_hook" "${post_args[@]}"
+  fi
+}
+
+main "$@"
