@@ -9,7 +9,8 @@
 #   ARX_VERSION           Release tag or bare semver (e.g. v1.2.3 or 1.2.3). Default: latest release.
 #   ARX_BIN_DIR           Install directory. If unset, tries $HOME/.local/bin then $HOME/bin, then the
 #                         first writable absolute directory already on your PATH.
-#   ARX_POST_INSTALL      If set, run after install: words become extra args (e.g. "install cursor").
+#   ARX_POST_INSTALL      Optional args after onboarding: e.g. "cursor" -> arx-hook install cursor.
+#                         If the first word is "install", the value is used as the full argv (legacy).
 #   ARX_GITHUB_API         Override GitHub API base (default: https://api.github.com)
 #
 # Requires: curl, tar, mkdir, chmod, jq
@@ -244,10 +245,19 @@ main() {
   echo "Installed: $dest_hook"
   echo "Installed: $dest_dash"
 
+  # Onboard: configure editors / hooks via the installed binary.
   if [[ -n "${ARX_POST_INSTALL:-}" ]]; then
     read -r -a post_args <<<"$ARX_POST_INSTALL"
-    echo "Running: $dest_hook ${post_args[*]}"
-    "$dest_hook" "${post_args[@]}"
+    if [[ "${post_args[0]:-}" == "install" ]]; then
+      echo "Running: $dest_hook ${post_args[*]}"
+      "$dest_hook" "${post_args[@]}"
+    else
+      echo "Running: $dest_hook install ${post_args[*]}"
+      "$dest_hook" install "${post_args[@]}"
+    fi
+  else
+    echo "Running: $dest_hook install"
+    "$dest_hook" install
   fi
 }
 
