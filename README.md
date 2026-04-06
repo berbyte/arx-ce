@@ -1,6 +1,6 @@
 # ARX installer
 
-Public install script and release mirror for the **arx-hook** CLI.
+Public install script and release mirror for **ARX** CLI.
 
 ## Install
 
