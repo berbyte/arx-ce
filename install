@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Install arx-hook and arx-dashboard from GitHub releases (GoReleaser archives).
+# Install arx and arx-dashboard from GitHub releases (GoReleaser archives).
 #
 # Linux / macOS:
 #   curl -fsSL https://get.arx.ber.run/install | bash
 #
 # Environment (optional):
-#   ARX_REPO              GitHub repo as owner/name (default: berbyte/arx-installer)
+#   ARX_REPO              GitHub repo as owner/name (default: berbyte/arx)
 #   ARX_VERSION           Release tag or bare semver (e.g. v1.2.3 or 1.2.3). Default: latest release.
 #   ARX_BIN_DIR           Install directory. If unset, tries $HOME/.local/bin then $HOME/bin, then the
 #                         first writable absolute directory already on your PATH.
-#   ARX_POST_INSTALL      Optional args after onboarding: e.g. "cursor" -> arx-hook install cursor.
+#   ARX_POST_INSTALL      Optional args after onboarding: e.g. "cursor" -> arx install cursor.
 #                         If the first word is "install", the value is used as the full argv (legacy).
 #   ARX_GITHUB_API         Override GitHub API base (default: https://api.github.com)
 #
@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-ARX_REPO="${ARX_REPO:-berbyte/arx-installer}"
+ARX_REPO="${ARX_REPO:-berbyte/arx}"
 # Set if user exported ARX_BIN_DIR (even empty); used to avoid overriding an explicit choice.
 if [ -n "${ARX_BIN_DIR+x}" ]; then
   ARX_BIN_DIR_SET_BY_USER=1
@@ -29,7 +29,7 @@ ARX_GITHUB_API="${ARX_GITHUB_API:-https://api.github.com}"
 
 need_cmd() {
   command -v "$1" >/dev/null 2>&1 || {
-    echo "arx-hook install: required command not found: $1" >&2
+    echo "arx install: required command not found: $1" >&2
     exit 1
   }
 }
@@ -69,10 +69,10 @@ resolve_install_dir() {
   done
   if picked="$(first_writable_path_dir)"; then
     ARX_BIN_DIR="$picked"
-    echo "arx-hook install: using ${ARX_BIN_DIR} (writable directory on your PATH)." >&2
+    echo "arx install: using ${ARX_BIN_DIR} (writable directory on your PATH)." >&2
     return 0
   fi
-  echo "arx-hook install: no writable install directory found; set ARX_BIN_DIR." >&2
+  echo "arx install: no writable install directory found; set ARX_BIN_DIR." >&2
   exit 1
 }
 
@@ -95,7 +95,7 @@ detect_os() {
   Linux*) echo linux ;;
   Darwin*) echo darwin ;;
   *)
-    echo "arx-hook install: unsupported OS (need Linux or macOS): $(uname -s)" >&2
+    echo "arx install: unsupported OS (need Linux or macOS): $(uname -s)" >&2
     exit 1
     ;;
   esac
@@ -106,13 +106,13 @@ detect_arch() {
   x86_64 | amd64) echo amd64 ;;
   aarch64 | arm64) echo arm64 ;;
   *)
-    echo "arx-hook install: unsupported CPU: $(uname -m)" >&2
+    echo "arx install: unsupported CPU: $(uname -m)" >&2
     exit 1
     ;;
   esac
 }
 
-# Bundle name: arx-hook_<semver>_<os>_<arch>.tar.gz (GoReleaser name_template, project_name arx-hook)
+# Bundle name: arx_<semver>_<os>_<arch>.tar.gz (GoReleaser name_template, project_name arx)
 bundle_url_from_release() {
   local json="$1" os="$2" arch="$3" exact="${4:-}"
   need_cmd jq
@@ -120,7 +120,7 @@ bundle_url_from_release() {
     jq -r --arg n "$exact" '.assets[] | select(.name == $n) | .browser_download_url' <<<"$json" | head -n1
   else
     jq -r --arg sfx "_${os}_${arch}.tar.gz" \
-      '.assets[] | select(.name | startswith("arx-hook_") and endswith($sfx)) | .browser_download_url' \
+      '.assets[] | select(.name | startswith("arx_") and endswith($sfx)) | .browser_download_url' \
       <<<"$json" | head -n1
   fi
 }
@@ -146,7 +146,7 @@ resolve_latest_bundle_url() {
   json="$(github_get "/repos/${ARX_REPO}/releases/latest")"
   url="$(bundle_url_from_release "$json" "$os" "$arch")"
   if [[ -z "$url" ]]; then
-    echo "arx-hook install: no arx-hook_*_${os}_${arch}.tar.gz in latest release for ${ARX_REPO}" >&2
+    echo "arx install: no arx_*_${os}_${arch}.tar.gz in latest release for ${ARX_REPO}" >&2
     exit 1
   fi
   printf '%s\n' "$url"
@@ -156,7 +156,7 @@ resolve_pinned_bundle_url() {
   local ver="$1" os="$2" arch="$3"
   local tag asset json url=""
   tag="$(ensure_tag "$ver")"
-  asset="arx-hook_${ver}_${os}_${arch}.tar.gz"
+  asset="arx_${ver}_${os}_${arch}.tar.gz"
 
   need_cmd curl
   if json="$(github_get "/repos/${ARX_REPO}/releases/tags/${tag}" 2>/dev/null)"; then
@@ -179,7 +179,7 @@ resolve_pinned_bundle_url() {
     done
   fi
   if [[ -z "$url" ]]; then
-    echo "arx-hook install: could not find asset ${asset} in releases for ${ARX_REPO}" >&2
+    echo "arx install: could not find asset ${asset} in releases for ${ARX_REPO}" >&2
     exit 1
   fi
   printf '%s\n' "$url"
@@ -226,18 +226,18 @@ main() {
   tar -xzf "${_arx_install_tmpdir}/bundle.tar.gz" -C "$_arx_install_tmpdir"
 
   local hook_src dash_src
-  hook_src="$(find_in_tree "$_arx_install_tmpdir" arx-hook)"
+  hook_src="$(find_in_tree "$_arx_install_tmpdir" arx)"
   dash_src="$(find_in_tree "$_arx_install_tmpdir" arx-dashboard)"
   if [[ -z "$hook_src" || ! -f "$hook_src" ]]; then
-    echo "arx-hook install: expected arx-hook not found in archive" >&2
+    echo "arx install: expected arx not found in archive" >&2
     exit 1
   fi
   if [[ -z "$dash_src" || ! -f "$dash_src" ]]; then
-    echo "arx-hook install: expected arx-dashboard not found in archive" >&2
+    echo "arx install: expected arx-dashboard not found in archive" >&2
     exit 1
   fi
 
-  local dest_hook="${ARX_BIN_DIR}/arx-hook"
+  local dest_hook="${ARX_BIN_DIR}/arx"
   local dest_dash="${ARX_BIN_DIR}/arx-dashboard"
   mv "$hook_src" "$dest_hook"
   mv "$dash_src" "$dest_dash"
@@ -247,8 +247,8 @@ main() {
   echo "Installed: $dest_dash"
 
   # curl … | bash leaves stdin connected to the pipe, not the keyboard. Interactive
-  # prompts in arx-hook install must read from the controlling terminal instead.
-  run_arx_hook_install() {
+  # prompts in arx install must read from the controlling terminal instead.
+  run_arx_install() {
     if [[ -r /dev/tty ]]; then
       "$@" < /dev/tty
     else
@@ -261,14 +261,14 @@ main() {
     read -r -a post_args <<<"$ARX_POST_INSTALL"
     if [[ "${post_args[0]:-}" == "install" ]]; then
       echo "Running: $dest_hook ${post_args[*]}"
-      run_arx_hook_install "$dest_hook" "${post_args[@]}"
+      run_arx_install "$dest_hook" "${post_args[@]}"
     else
       echo "Running: $dest_hook install ${post_args[*]}"
-      run_arx_hook_install "$dest_hook" install "${post_args[@]}"
+      run_arx_install "$dest_hook" install "${post_args[@]}"
     fi
   else
     echo "Running: $dest_hook install"
-    run_arx_hook_install "$dest_hook" install
+    run_arx_install "$dest_hook" install
   fi
 }
 
