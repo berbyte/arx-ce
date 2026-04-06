@@ -214,19 +214,20 @@ main() {
     url="$(resolve_latest_bundle_url "$os" "$arch")"
   fi
 
-  local tmpdir
-  tmpdir="$(mktemp -d)"
-  trap 'rm -rf "$tmpdir"' EXIT
+  # Global (not local): EXIT trap runs after main returns; with set -u, a local tmpdir
+  # would be out of scope and trigger "tmpdir: unbound variable" in the trap.
+  _arx_install_tmpdir="$(mktemp -d)"
+  trap 'rm -rf "${_arx_install_tmpdir:-}"' EXIT
 
   echo "Downloading bundle ..."
-  curl -fL --retry 3 --retry-delay 1 -o "${tmpdir}/bundle.tar.gz" "$url"
+  curl -fsL --retry 3 --retry-delay 1 -o "${_arx_install_tmpdir}/bundle.tar.gz" "$url"
 
   mkdir -p "$ARX_BIN_DIR"
-  tar -xzf "${tmpdir}/bundle.tar.gz" -C "$tmpdir"
+  tar -xzf "${_arx_install_tmpdir}/bundle.tar.gz" -C "$_arx_install_tmpdir"
 
   local hook_src dash_src
-  hook_src="$(find_in_tree "$tmpdir" arx-hook)"
-  dash_src="$(find_in_tree "$tmpdir" arx-dashboard)"
+  hook_src="$(find_in_tree "$_arx_install_tmpdir" arx-hook)"
+  dash_src="$(find_in_tree "$_arx_install_tmpdir" arx-dashboard)"
   if [[ -z "$hook_src" || ! -f "$hook_src" ]]; then
     echo "arx-hook install: expected arx-hook not found in archive" >&2
     exit 1
@@ -245,19 +246,29 @@ main() {
   echo "Installed: $dest_hook"
   echo "Installed: $dest_dash"
 
+  # curl … | bash leaves stdin connected to the pipe, not the keyboard. Interactive
+  # prompts in arx-hook install must read from the controlling terminal instead.
+  run_arx_hook_install() {
+    if [[ -r /dev/tty ]]; then
+      "$@" < /dev/tty
+    else
+      "$@"
+    fi
+  }
+
   # Onboard: configure editors / hooks via the installed binary.
   if [[ -n "${ARX_POST_INSTALL:-}" ]]; then
     read -r -a post_args <<<"$ARX_POST_INSTALL"
     if [[ "${post_args[0]:-}" == "install" ]]; then
       echo "Running: $dest_hook ${post_args[*]}"
-      "$dest_hook" "${post_args[@]}"
+      run_arx_hook_install "$dest_hook" "${post_args[@]}"
     else
       echo "Running: $dest_hook install ${post_args[*]}"
-      "$dest_hook" install "${post_args[@]}"
+      run_arx_hook_install "$dest_hook" install "${post_args[@]}"
     fi
   else
     echo "Running: $dest_hook install"
-    "$dest_hook" install
+    run_arx_hook_install "$dest_hook" install
   fi
 }
 
