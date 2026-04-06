@@ -5,7 +5,7 @@
 #   curl -fsSL https://get.arx.ber.run/install | bash
 #
 # Environment (optional):
-#   ARX_REPO              GitHub repo as owner/name (default: berbyte/arx)
+#   ARX_REPO              GitHub repo as owner/name (default: berbyte/arx-installer)
 #   ARX_VERSION           Release tag or bare semver (e.g. v1.2.3 or 1.2.3). Default: latest release.
 #   ARX_BIN_DIR           Install directory. If unset, tries $HOME/.local/bin then $HOME/bin, then the
 #                         first writable absolute directory already on your PATH.
@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-ARX_REPO="${ARX_REPO:-berbyte/arx}"
+ARX_REPO="${ARX_REPO:-berbyte/arx-installer}"
 # Set if user exported ARX_BIN_DIR (even empty); used to avoid overriding an explicit choice.
 if [ -n "${ARX_BIN_DIR+x}" ]; then
   ARX_BIN_DIR_SET_BY_USER=1
