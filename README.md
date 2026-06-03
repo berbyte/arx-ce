@@ -10,23 +10,17 @@ ARX gives you controlled model execution — it captures the prompts, decisions,
 
 [![ARX Demo](https://i.ytimg.com/vi/-sDccFkLom4/maxresdefault.jpg)](https://www.youtube.com/watch?v=-sDccFkLom4)
 
+## Works with your tools
+
+Claude Code · OpenAI Codex · Cursor · GitHub Copilot
+
+Available on **Linux**, **macOS**, and **Windows**.
+
 ## Install
 
-```bash
-curl -fsSL https://get-arx.ber.run/install | bash
-```
+<pre><code>curl -fsSL https://get-arx.ber.run/install | bash</code></pre>
 
-Installs `arx` and `arx-dashboard` to `~/.local/bin` (or the first writable directory on your `PATH`).
-
-### Options
-
-| Variable | Description |
-|---|---|
-| `ARX_VERSION` | Pin a release tag, e.g. `v1.2.3` (default: latest) |
-| `ARX_BIN_DIR` | Override the install directory |
-| `ARX_POST_INSTALL` | Editor to wire up after install, e.g. `cursor` |
-
-**Requires:** `curl`, `tar`, `jq`
+Installs the `arx` binary to `~/.local/bin` (or the first writable directory on your `PATH`).
 
 ## What you get
 
@@ -48,4 +42,6 @@ Installs `arx` and `arx-dashboard` to `~/.local/bin` (or the first writable dire
 
 ## Privacy
 
-No traffic interception. No IDE proxying. No raw screen or keystroke capture. Structured signals, not invasive data. Engineers see their own data first.
+Your data stays on your machine. No data is sent to us — ARX uses your own local AI tools (Claude, Codex, etc.) to evaluate your prompts. Any sensitive data ARX captures is stored encrypted locally.
+
+No traffic interception. No IDE proxying. No raw screen or keystroke capture.
