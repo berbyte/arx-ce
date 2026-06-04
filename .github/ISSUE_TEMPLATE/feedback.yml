@@ -1,0 +1,51 @@
+name: Beta feedback
+description: Share your experience using ARX during the private beta
+title: "[Feedback] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying ARX. Your feedback directly shapes what we build next — don't hold back.
+
+  - type: input
+    id: arx-version
+    attributes:
+      label: ARX version
+      description: Run `arx --version`
+      placeholder: "e.g. 0.3.1"
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What were you doing?
+      description: Briefly describe your workflow — what AI tool, what kind of task.
+      placeholder: "e.g. Using Claude Code to refactor a Go service, ran arx session alongside it"
+    validations:
+      required: true
+
+  - type: textarea
+    id: worked-well
+    attributes:
+      label: What worked well?
+      placeholder: Anything that felt smooth, useful, or surprising in a good way
+    validations:
+      required: false
+
+  - type: textarea
+    id: confusing
+    attributes:
+      label: What was confusing or missing?
+      placeholder: Anything that felt rough, unclear, or like it should exist but doesn't
+    validations:
+      required: false
+
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else?
+      placeholder: Ideas, questions, observations — anything on your mind
+    validations:
+      required: false

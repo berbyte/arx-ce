@@ -22,6 +22,17 @@ Available on **Linux**, **macOS**, and **Windows**.
 
 Installs the `arx` binary to `~/.local/bin` (or the first writable directory on your `PATH`).
 
+## Quickstart
+
+After installing, run `arx session` before you start your AI tool:
+
+```sh
+arx session
+# then open Claude Code, Cursor, Codex, etc. as usual
+```
+
+When your session ends, ARX generates a report — what you prompted, where you lost time, and what to do differently next time.
+
 ## What you get
 
 **For engineers**
@@ -45,3 +56,11 @@ Installs the `arx` binary to `~/.local/bin` (or the first writable directory on 
 Your data stays on your machine. No data is sent to us — ARX uses your own local AI tools (Claude, Codex, etc.) to evaluate your prompts. Any sensitive data ARX captures is stored encrypted locally.
 
 No traffic interception. No IDE proxying. No raw screen or keystroke capture.
+
+## Feedback
+
+Found a bug? [Open an issue](https://github.com/berbyte/arx-community/issues/new/choose)
+
+Have a question or idea? [Start a discussion](https://github.com/berbyte/arx-community/discussions)
+
+Security issue? Email dominis@ber.run — do not open a public issue.
