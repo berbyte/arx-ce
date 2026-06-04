@@ -3,6 +3,3 @@ contact_links:
   - name: Ask a question or start a discussion
     url: https://github.com/berbyte/arx-community/discussions
     about: For general questions, ideas, and conversation — not a specific bug or feature request.
-  - name: Security vulnerability
-    url: https://github.com/berbyte/arx-community/blob/main/SECURITY.md
-    about: Please do not open a public issue for security concerns. See our security policy instead.
