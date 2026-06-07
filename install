@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install arx and arx-dashboard from GitHub releases (GoReleaser archives).
+# Install arx from GitHub releases (GoReleaser archives).
 #
 # Linux / macOS:
 #   curl -fsSL https://get.arx.ber.run/install | bash
@@ -225,26 +225,18 @@ main() {
   mkdir -p "$ARX_BIN_DIR"
   tar -xzf "${_arx_install_tmpdir}/bundle.tar.gz" -C "$_arx_install_tmpdir"
 
-  local hook_src dash_src
-  hook_src="$(find_in_tree "$_arx_install_tmpdir" arx)"
-  dash_src="$(find_in_tree "$_arx_install_tmpdir" arx-dashboard)"
-  if [[ -z "$hook_src" || ! -f "$hook_src" ]]; then
+  local arx_src
+  arx_src="$(find_in_tree "$_arx_install_tmpdir" arx)"
+  if [[ -z "$arx_src" || ! -f "$arx_src" ]]; then
     echo "arx install: expected arx not found in archive" >&2
     exit 1
   fi
-  if [[ -z "$dash_src" || ! -f "$dash_src" ]]; then
-    echo "arx install: expected arx-dashboard not found in archive" >&2
-    exit 1
-  fi
 
-  local dest_hook="${ARX_BIN_DIR}/arx"
-  local dest_dash="${ARX_BIN_DIR}/arx-dashboard"
-  mv "$hook_src" "$dest_hook"
-  mv "$dash_src" "$dest_dash"
-  chmod +x "$dest_hook" "$dest_dash"
+  local dest="${ARX_BIN_DIR}/arx"
+  mv "$arx_src" "$dest"
+  chmod +x "$dest"
 
-  echo "Installed: $dest_hook"
-  echo "Installed: $dest_dash"
+  echo "Installed: $dest"
 
   # curl … | bash leaves stdin connected to the pipe, not the keyboard. Interactive
   # prompts in arx install must read from the controlling terminal instead.
@@ -260,15 +252,15 @@ main() {
   if [[ -n "${ARX_POST_INSTALL:-}" ]]; then
     read -r -a post_args <<<"$ARX_POST_INSTALL"
     if [[ "${post_args[0]:-}" == "install" ]]; then
-      echo "Running: $dest_hook ${post_args[*]}"
-      run_arx_install "$dest_hook" "${post_args[@]}"
+      echo "Running: $dest ${post_args[*]}"
+      run_arx_install "$dest" "${post_args[@]}"
     else
-      echo "Running: $dest_hook install ${post_args[*]}"
-      run_arx_install "$dest_hook" install "${post_args[@]}"
+      echo "Running: $dest install ${post_args[*]}"
+      run_arx_install "$dest" install "${post_args[@]}"
     fi
   else
-    echo "Running: $dest_hook install"
-    run_arx_install "$dest_hook" install
+    echo "Running: $dest install"
+    run_arx_install "$dest" install
   fi
 }
 
