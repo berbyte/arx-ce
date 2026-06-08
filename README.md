@@ -35,6 +35,7 @@
 <summary><b>Table of Contents</b></summary>
 
 - [What is ARX?](#what-is-arx)
+- [Demo](#demo)
 - [Scorecard](#scorecard)
 - [Timeline](#timeline)
 - [Install](#install)
@@ -44,6 +45,12 @@
 - [Feedback](#feedback)
 
 </details>
+
+---
+
+## Demo
+
+[![ARX Demo](https://i.ytimg.com/vi/-sDccFkLom4/maxresdefault.jpg)](https://www.youtube.com/watch?v=-sDccFkLom4)
 
 ---
 
