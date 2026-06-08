@@ -26,16 +26,19 @@
   </p>
 </div>
 
+> [!WARNING]
+> **ARX is currently in private beta.** The parser has been tested against 1794 sessions, but your patterns will likely surface edge cases we haven't seen yet. Bugs at this stage are expected and useful — please [report them here](https://github.com/berbyte/arx-community/issues/new/choose).
+
 ---
 
 <details>
 <summary><b>Table of Contents</b></summary>
 
 - [What is ARX?](#what-is-arx)
-- [Demo](#demo)
+- [Scorecard](#scorecard)
+- [Timeline](#timeline)
 - [Install](#install)
 - [Quickstart](#quickstart)
-- [What you get](#what-you-get)
 - [How it works](#how-it-works)
 - [Privacy](#privacy)
 - [Feedback](#feedback)
@@ -48,15 +51,48 @@
 
 ARX is a session recorder for AI-assisted development. It sits quietly in the background while you work with Claude Code, Cursor, Codex, or Copilot — capturing the full picture: what you prompted, what the model decided, which tools it called, and where things went sideways.
 
-When the session ends, ARX turns that into a structured report you can act on.
+When the session ends, ARX turns that into structured reports you can act on.
 
 **Works with:** Claude Code · OpenAI Codex · Cursor · GitHub Copilot
 
 ---
 
-## Demo
+## Scorecard
 
-[![ARX Demo](https://i.ytimg.com/vi/-sDccFkLom4/maxresdefault.jpg)](https://www.youtube.com/watch?v=-sDccFkLom4)
+<!-- GIF: scorecard demo -->
+
+The Scorecard gives you a high-level view of how a session went — at a glance, without reading through logs.
+
+- **Phase breakdown** — how much time the agent spent exploring, planning, implementing, and verifying
+- **Token spend and cost** — total USD cost for the session and per-prompt breakdown
+- **File impact** — which files were touched and how many times (hot files highlighted)
+- **Anomaly detection** — ARX automatically flags things like prompt loops, context window pressure, high failure rates, and repeated edits to the same file
+
+Run it on any branch:
+
+```bash
+arx timeline
+```
+
+---
+
+## Timeline
+
+<!-- GIF: timeline demo -->
+
+The Timeline is a full audit log of every action the agent took, in chronological order.
+
+- **Every tool call, permission request, and sub-agent** — one meaningful event per line
+- **Token spend per prompt block** — with USD cost, so you can see exactly where the bill comes from
+- **Context window utilization** — see how close each prompt came to the limit
+- **Session statistics** — duration, model used, permission mode, tool call counts by phase
+
+Where the Scorecard tells you *what*, the Timeline tells you *why* and *how*. Use it when something went wrong and you need to understand the sequence of events.
+
+```bash
+arx timeline        # default view with scorecard + event log
+arx timeline --raw  # compact audit log, one event per line
+```
 
 ---
 
@@ -70,65 +106,50 @@ Installs the `arx` binary to `~/.local/bin` (or the first writable directory on 
 
 Available on **Linux**, **macOS**, and **Windows**.
 
+**The installer auto-detects your tools.** It checks for Claude Code, Cursor, and Codex, and automatically configures hook integrations for each one it finds. No manual config required — just run the install command and start working.
+
+To remove ARX and all its hooks cleanly:
+
+```bash
+arx uninstall
+```
+
 ---
 
 ## Quickstart
 
-Run `arx session` before you start your AI tool:
+1. Run the install command above
+2. Use your AI tools as normal — ARX records in the background
+3. When you're done, run `arx timeline` to see what happened
 
 ```bash
-arx session
-# then open Claude Code, Cursor, Codex, etc. as usual
+arx timeline
 ```
 
-When your session ends, ARX generates a report — what you prompted, where you lost time, and what to do differently next time.
-
----
-
-## What you get
-
-**For engineers**
-
-| What ARX captures | Why it matters |
-|---|---|
-| Every prompt and model decision | Understand your actual workflow, not what you think it is |
-| Tool calls and file changes | See where the model acted autonomously vs. where you intervened |
-| Time and quality loss points | Know exactly where your sessions break down |
-| Session-over-session patterns | Get concrete actions to improve your next run |
-
-**For teams**
-
-- Aggregate patterns across engineers
-- See what workflows actually work and which setups outperform others
-- Identify where teams consistently get stuck or lose quality
-
-**For leadership**
-
-- Early signals of risk before it reaches production
-- Real operational insight into AI adoption — not assumptions
-- Visibility without adding friction to engineering workflows
+That's it. ARX never blocks or modifies your sessions. If a hook fails for any reason, it fails silently and logs in the background.
 
 ---
 
 ## How it works
 
-ARX wraps your existing AI tool session. It hooks into the session context — not your IDE, not your network traffic — and records the structured data that your AI tools already produce.
+ARX hooks into your AI tool's session context — not your IDE, not your network traffic — and records the structured data that your tools already produce.
 
-After the session, it uses your local AI tools to evaluate and summarize what happened. Nothing is sent to us.
+After the session, it uses your local AI tools to evaluate and summarize what happened. Nothing leaves your machine except your email and GitHub username, which are submitted once at install time so we know who's in the beta.
 
 ---
 
 ## Privacy
 
-Your data stays on your machine.
+Your work stays on your machine.
 
-- No data sent to ARX servers
+- No prompts, code, or secrets are sent to ARX servers
 - No network traffic interception
 - No IDE proxying
 - No raw screen or keystroke capture
-- Any sensitive data is stored encrypted locally
+- Sensitive data is stored encrypted at rest (AES-256-GCM)
+- Prompt analysis runs through your local coding agents, which already hold that data
 
-ARX uses your own local AI tools (Claude, Codex, etc.) to evaluate your sessions.
+The only thing ARX sends externally is your email and GitHub username at install time.
 
 ---
 
