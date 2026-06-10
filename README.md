@@ -49,7 +49,7 @@
 
 ## Demo
 
-[![ARX Demo](https://i.ytimg.com/vi/-sDccFkLom4/maxresdefault.jpg)](https://www.youtube.com/watch?v=-sDccFkLom4)
+[![ARX Demo](https://i.ytimg.com/vi/-sDccFkLom4/maxresdefault.jpg?a)](https://www.youtube.com/watch?v=-sDccFkLom4)
 
 ---
 
