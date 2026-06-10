@@ -1,5 +1,4 @@
 <a id="readme-top"></a>
-
 <div align="center">
   <img src="https://share.ber.sh/arx-splash.png" alt="ARX: Controlled AI Execution" width="600">
   <h1 align="center">ARX: See what AI did to your codebase</h1>
