@@ -151,14 +151,32 @@ After the session, it uses your local AI tools to evaluate and summarize what ha
 
 Your work stays on your machine.
 
-- No prompts, code, or secrets are sent to ARX servers
-- No network traffic interception
-- No IDE proxying
-- No raw screen or keystroke capture
-- Sensitive data is stored encrypted at rest (AES-256-GCM)
-- Prompt analysis runs through your local coding agents, which already hold that data
+ARX **never** transmits your code, diffs, prompts, tokens, secrets, or API keys — to us or anyone else. Prompt analysis runs entirely through your local AI tools, which already hold that data. ARX only reads the structured session files those tools produce; it does not proxy, intercept, or mirror any network traffic.
 
-The only thing ARX sends externally is your email and GitHub username at install time.
+What ARX does send externally:
+
+| What | When | Why |
+|------|------|-----|
+| Email + GitHub username | Once, at install time | Beta registration |
+| Version check request | Hourly (auto-update) | Keeps the binary current |
+
+**Disabling auto-update**
+
+Add this to `~/.arx/config.yaml`:
+
+```yaml
+auto_update: disable
+```
+
+Once disabled, ARX makes no outbound connections of its own.
+
+For a full hardened setup — including blocking all network access at the OS level with AppArmor, Windows Firewall, or macOS tools — see [docs/paranoid-setup.md](docs/paranoid-setup.md).
+
+Other protections:
+
+- No network traffic interception or IDE proxying
+- No raw screen or keystroke capture
+- Session data is stored encrypted at rest (AES-256-GCM)
 
 ---
 
