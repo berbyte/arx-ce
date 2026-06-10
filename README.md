@@ -2,12 +2,12 @@
 
 <div align="center">
   <img src="https://share.ber.sh/arx-splash.png" alt="ARX: Controlled AI Execution" width="600">
-  <h1 align="center">ARX: See what AI actually did to your codebase</h1>
+  <h1 align="center">ARX: See what AI did to your codebase</h1>
   <p align="center">
     AI is already writing your code. You just don't see how.<br />
     <br />
     ARX captures the prompts, decisions, tool usage, and workflows behind every AI-assisted session —<br />
-    so you can see what actually happened before it reaches production.<br /><br />
+    so you can see what happened before it reaches production.<br /><br />
     <strong>Git shows the outcome. ARX shows the process.</strong>
     <br /><br />
     <a href="#what-is-arx"><strong>Learn More »</strong></a>
