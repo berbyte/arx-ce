@@ -66,7 +66,9 @@ When the session ends, ARX turns that into structured reports you can act on.
 
 ## Scorecard
 
-<!-- GIF: scorecard demo -->
+<div align="center">
+  <img src="docs/assets/scorecard.svg" alt="ARX Scorecard" width="600">
+</div>
 
 The Scorecard gives you a high-level view of how a session went — at a glance, without reading through logs.
 
@@ -78,7 +80,7 @@ The Scorecard gives you a high-level view of how a session went — at a glance,
 Run it on any branch:
 
 ```bash
-arx timeline
+arx scorecard
 ```
 
 ---
