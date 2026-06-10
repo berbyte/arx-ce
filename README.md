@@ -72,10 +72,10 @@ When the session ends, ARX turns that into structured reports you can act on.
 
 The Scorecard gives you a high-level view of how a session went — at a glance, without reading through logs.
 
-- **Phase breakdown** — how much time the agent spent exploring, planning, implementing, and verifying
-- **Token spend and cost** — total USD cost for the session and per-prompt breakdown
-- **File impact** — which files were touched and how many times (hot files highlighted)
-- **Anomaly detection** — ARX automatically flags things like prompt loops, context window pressure, high failure rates, and repeated edits to the same file
+- **Execution** — how many tool calls were made, how many failed, and how time split between thinking and doing
+- **Prompt quality** — scored ratings for clarity, scope drift, requirement changes, and context resets
+- **Cost efficiency** — where tokens were wasted: duplicate reads, unnecessary calls, bloated context, and how much of the output you actually kept
+- **Insights** — what you did well and concrete suggestions to get better results next time
 
 Run it on any branch:
 
