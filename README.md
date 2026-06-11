@@ -1,6 +1,6 @@
 <a id="readme-top"></a>
 <div align="center">
-  <img src="docs/assets/banner.png" alt="ARX: See what AI did to your codebase" width="800">
+  <img src="docs/assets/banner.png" alt="ARX: See what AI did to your codebase" width="400">
   <h1 align="center">ARX: See what AI did to your codebase</h1>
   <p align="center">
     AI is already writing your code. You just don't see how.<br />
