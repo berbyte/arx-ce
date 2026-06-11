@@ -1,5 +1,4 @@
 <a id="readme-top"></a>
-
 <div align="center">
   <img src="docs/assets/banner.png" alt="ARX: See what AI did to your codebase" width="269">
   <h1 align="center">ARX: See what AI did to your codebase</h1>
@@ -52,7 +51,7 @@
 
 ## Demo
 
-[![ARX Demo](/docs/assets/demo-splash.png)](https://www.youtube.com/watch?v=-sDccFkLom4)
+[![ARX Demo](/docs/assets/demo-splash.png?a)](https://www.youtube.com/watch?v=-sDccFkLom4)
 
 ---
 
