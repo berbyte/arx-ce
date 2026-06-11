@@ -9,7 +9,7 @@ ARX makes two kinds of outbound connections:
 | Connection | When | Destination |
 |------------|------|-------------|
 | Beta registration | Once, at install time | `ber.run` — submits your email and GitHub username |
-| Version check | Hourly | `ber.run` — checks for a newer binary and downloads it if available |
+| Version check | Hourly | `github.com ` — checks for a newer binary and downloads it if available |
 
 ARX **never** sends:
 
@@ -92,8 +92,7 @@ You should see `arx` listed under `processes in enforce mode`.
 To test that the block works:
 
 ```bash
-arx --version   # should work
-curl --next arx 2>&1 || true  # not relevant, but you can strace arx and confirm no connect() syscalls
+arx version   # should work
 strace -e trace=network arx timeline 2>&1 | grep -v "^---"
 ```
 
@@ -102,21 +101,6 @@ strace -e trace=network arx timeline 2>&1 | grep -v "^---"
 ```bash
 sudo apparmor_parser -R /etc/apparmor.d/home.arx
 ```
-
----
-
-### Linux — iptables / nftables (alternative, no AppArmor required)
-
-If AppArmor is not available, you can use `iptables` owner matching to block outbound traffic from the arx binary by UID. This is coarser (it blocks all traffic from your user if arx runs as you), so AppArmor is preferred for binary-level control.
-
-For a quick test with `iptables`:
-
-```bash
-# Block outbound from your user (replace 1000 with your UID)
-sudo iptables -A OUTPUT -m owner --uid-owner 1000 -m comment --comment "block arx" -j REJECT
-```
-
-This is a blunt instrument. Use AppArmor for surgical per-binary control.
 
 ---
 
@@ -134,10 +118,6 @@ macOS's built-in Application Firewall (`System Settings → Network → Firewall
 
 1. Open Little Snitch Rules
 2. Add rule: `arx` → **Deny** → **Any Connection** → **Forever**
-
-**Option C: pf (built-in, advanced)**
-
-macOS includes `pf` (packet filter). You can anchor a rule to block by executable path, but this requires knowing the exact path and reloads on each boot. LuLu is simpler for most users.
 
 ---
 

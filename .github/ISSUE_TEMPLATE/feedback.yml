@@ -12,7 +12,7 @@ body:
     id: arx-version
     attributes:
       label: ARX version
-      description: Run `arx --version`
+      description: Run `arx version`
       placeholder: "e.g. 0.3.1"
     validations:
       required: false
