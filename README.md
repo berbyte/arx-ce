@@ -1,4 +1,5 @@
 <a id="readme-top"></a>
+
 <div align="center">
   <img src="docs/assets/banner.png" alt="ARX: See what AI did to your codebase" width="269">
   <h1 align="center">ARX: See what AI did to your codebase</h1>
