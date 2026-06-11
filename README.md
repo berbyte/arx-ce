@@ -9,7 +9,7 @@
     so you can see what happened before it reaches production.<br /><br />
     <strong>Git shows the outcome. ARX shows the process.</strong>
     <br /><br />
-    <a href="#what-is-arx"><strong>Learn More »</strong></a>
+    <a href="#demo"><strong>Learn More »</strong></a>
     &middot;
     <a href="#install">Install</a>
     &middot;
@@ -175,7 +175,7 @@ Other protections:
 
 - No network traffic interception or IDE proxying
 - No raw screen or keystroke capture
-- Session data is stored encrypted at rest (AES-256-GCM)
+- Session data is stored encrypted at rest ([AES-256-GCM](https://github.com/berbyte/cryptlite))
 
 ---
 
