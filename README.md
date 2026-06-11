@@ -118,6 +118,10 @@ arx timeline --raw  # compact audit log, one event per line
 
 ## Ping
 
+<div align="center">
+  <img src="docs/assets/ping.svg" alt="ARX Ping" width="600">
+</div>
+
 Instructions in `CLAUDE.md` are not always followed — and there's no built-in way to know which sessions or turns skipped them.
 
 ARX tracks this with a lightweight ping mechanism. Add a single line to your `CLAUDE.md` telling the agent to call `arx ping` at the end of each turn. ARX then produces a per-turn compliance report showing which turns honored the instruction and which didn't.
