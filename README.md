@@ -35,8 +35,10 @@
 
 - [What is ARX?](#what-is-arx)
 - [Demo](#demo)
+- [Features](#features)
 - [Scorecard](#scorecard)
 - [Timeline](#timeline)
+- [Ping](#ping)
 - [Install](#install)
 - [Quickstart](#quickstart)
 - [How it works](#how-it-works)
@@ -50,6 +52,14 @@
 ## Demo
 
 [![ARX Demo](/docs/assets/demo-splash.png)](https://www.youtube.com/watch?v=-sDccFkLom4)
+
+---
+
+## Features
+
+- **Scorecard** — a session quality report: tool success rate, prompt clarity, token waste, and actionable improvement suggestions
+- **Timeline** — a full chronological audit log of every tool call, token cost, and agent decision
+- **Instruction compliance** — tracks whether agents follow `CLAUDE.md` instructions turn-by-turn, giving you a measurable signal where you'd otherwise have none
 
 ---
 
@@ -100,6 +110,27 @@ Where the Scorecard tells you *what*, the Timeline tells you *why* and *how*. Us
 ```bash
 arx timeline        # default view with scorecard + event log
 arx timeline --raw  # compact audit log, one event per line
+```
+
+---
+
+## Ping
+
+Instructions in `CLAUDE.md` are not always followed — and there's no built-in way to know which sessions or turns skipped them.
+
+ARX tracks this with a lightweight ping mechanism. Add a single line to your `CLAUDE.md` telling the agent to call `arx ping` at the end of each turn. ARX then produces a per-turn compliance report showing which turns honored the instruction and which didn't.
+
+It won't catch every violation, and it relies on the agent cooperating to report itself — but it gives you a measurable signal where you'd otherwise have none.
+
+```bash
+arx ping                          # show compliance report for the current branch
+arx ping --reason "what I did"    # record a ping (called by the AI at end of turn)
+```
+
+To enable, add to your project's `CLAUDE.md`:
+
+```markdown
+At the end of every turn, run: arx ping --reason "<brief summary of what you did>"
 ```
 
 ---
