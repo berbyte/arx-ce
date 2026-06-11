@@ -96,7 +96,9 @@ arx scorecard
 
 ## Timeline
 
-<!-- GIF: timeline demo -->
+<div align="center">
+  <img src="docs/assets/timeline.svg" alt="ARX Timeline" width="600">
+</div>
 
 The Timeline is a full audit log of every action the agent took, in chronological order.
 
