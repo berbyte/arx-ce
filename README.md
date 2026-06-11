@@ -59,7 +59,7 @@
 
 - **Scorecard** — a session quality report: tool success rate, prompt clarity, token waste, and actionable improvement suggestions
 - **Timeline** — a full chronological audit log of every tool call, token cost, and agent decision
-- **Instruction compliance** — tracks whether agents follow `CLAUDE.md` instructions turn-by-turn, giving you a measurable signal where you'd otherwise have none
+- **Instruction compliance** — tracks whether agents follow `AGENTS.md` instructions turn-by-turn, giving you a measurable signal where you'd otherwise have none
 
 ---
 
@@ -122,9 +122,9 @@ arx timeline --raw  # compact audit log, one event per line
   <img src="docs/assets/ping.svg" alt="ARX Ping" width="600">
 </div>
 
-Instructions in `CLAUDE.md` are not always followed — and there's no built-in way to know which sessions or turns skipped them.
+Instructions in `AGENTS.md` are not always followed — and there's no built-in way to know which sessions or turns skipped them.
 
-ARX tracks this with a lightweight ping mechanism. Add a single line to your `CLAUDE.md` telling the agent to call `arx ping` at the end of each turn. ARX then produces a per-turn compliance report showing which turns honored the instruction and which didn't.
+ARX tracks this with a lightweight ping mechanism. Add a single line to your `AGENTS.md` telling the agent to call `arx ping` at the end of each turn. ARX then produces a per-turn compliance report showing which turns honored the instruction and which didn't.
 
 It won't catch every violation, and it relies on the agent cooperating to report itself — but it gives you a measurable signal where you'd otherwise have none.
 
@@ -133,7 +133,7 @@ arx ping                          # show compliance report for the current branc
 arx ping --reason "what I did"    # record a ping (called by the AI at end of turn)
 ```
 
-To enable, add to your project's `CLAUDE.md`:
+To enable, add to your project's `AGENTS.md`:
 
 ```markdown
 At the end of every turn, run: arx ping --reason "<brief summary of what you did>"
