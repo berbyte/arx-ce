@@ -1,5 +1,6 @@
 <a id="readme-top"></a>
 <div align="center">
+  <img src="docs/assets/banner.svg" alt="ARX: See what AI did to your codebase" width="800">
   <img src="https://share.ber.sh/arx-splash.png" alt="ARX: Controlled AI Execution" width="600">
   <h1 align="center">ARX: See what AI did to your codebase</h1>
   <p align="center">
@@ -36,9 +37,9 @@
 - [What is ARX?](#what-is-arx)
 - [Demo](#demo)
 - [Features](#features)
-- [Scorecard](#scorecard)
-- [Timeline](#timeline)
-- [Ping](#ping)
+- [Scorecard: Session quality report](#scorecard-session-quality-report)
+- [Timeline: Full audit log](#timeline-full-audit-log)
+- [Ping: AGENTS.md compliance check](#ping-agentsmd-compliance-check)
 - [Install](#install)
 - [Quickstart](#quickstart)
 - [How it works](#how-it-works)
@@ -73,7 +74,7 @@ When the session ends, ARX turns that into structured reports you can act on.
 
 ---
 
-## Scorecard
+## Scorecard: Session quality report
 
 <div align="center">
   <img src="docs/assets/scorecard.svg" alt="ARX Scorecard" width="600">
@@ -94,7 +95,7 @@ arx scorecard
 
 ---
 
-## Timeline
+## Timeline: Full audit log
 
 <div align="center">
   <img src="docs/assets/timeline.svg" alt="ARX Timeline" width="600">
@@ -116,7 +117,7 @@ arx timeline --raw  # compact audit log, one event per line
 
 ---
 
-## Ping
+## Ping: AGENTS.md compliance check
 
 <div align="center">
   <img src="docs/assets/ping.svg" alt="ARX Ping" width="600">
