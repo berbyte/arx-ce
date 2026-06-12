@@ -9,11 +9,9 @@
     so you can see what happened before it reaches production.<br /><br />
     <strong>Git shows the outcome. ARX shows the process.</strong>
     <br /><br />
-    <a href="#demo"><strong>Learn More »</strong></a>
+    <a href="#demo"><strong>See it in action »</strong></a>
     &middot;
-    <a href="#install">Install</a>
-    &middot;
-    <a href="#quickstart">Quickstart</a>
+    <a href="#install">Install in 30 seconds</a>
     &middot;
     <a href="https://github.com/berbyte/arx-community/issues/new/choose">Report a Bug</a>
   </p>
@@ -30,22 +28,17 @@
 
 ---
 
-<details>
-<summary><b>Table of Contents</b></summary>
+## The problem
 
-- [What is ARX?](#what-is-arx)
-- [Demo](#demo)
-- [Features](#features)
-- [Scorecard: Session quality report](#scorecard-session-quality-report)
-- [Timeline: Full audit log](#timeline-full-audit-log)
-- [Ping: AGENTS.md compliance check](#ping-agentsmd-compliance-check)
-- [Install](#install)
-- [Quickstart](#quickstart)
-- [How it works](#how-it-works)
-- [Privacy](#privacy)
-- [Feedback](#feedback)
+AI is writing more of your code every day. But the moment the session ends, the process disappears.
 
-</details>
+You see the diff. You don't see why the model made the choices it did, which prompts sent it in the wrong direction, where it spun its wheels retrying the same failing tool call, or how many tokens you burned on context it already had.
+
+Git records what changed. Nothing records how it got there — until now.
+
+ARX hooks into your AI tool's session context and captures everything: every prompt, every tool call, every decision, every token. When the session ends, it turns that into structured reports you can act on.
+
+**Works with:** Claude Code · OpenAI Codex · Cursor · GitHub Copilot
 
 ---
 
@@ -55,21 +48,55 @@
 
 ---
 
+## Install
+
+```bash
+curl -fsSL https://get-arx.ber.run/install | bash
+```
+
+Installs the `arx` binary to `~/.local/bin` (or the first writable directory on your `PATH`). Available on **Linux**, **macOS**, and **Windows**.
+
+**The installer auto-detects your tools.** It checks for Claude Code, Cursor, and Codex and automatically configures hook integrations for each one it finds. No manual config required.
+
+Then use your AI tools as normal. When you're done:
+
+```bash
+arx timeline
+```
+
+That's it. ARX never blocks or modifies your sessions. If a hook fails for any reason, it fails silently and logs in the background.
+
+To remove ARX and all its hooks cleanly:
+
+```bash
+arx uninstall
+```
+
+---
+
+<details>
+<summary><b>Table of Contents</b></summary>
+
+- [The problem](#the-problem)
+- [Demo](#demo)
+- [Install](#install)
+- [Features](#features)
+- [Scorecard: Session quality report](#scorecard-session-quality-report)
+- [Timeline: Full audit log](#timeline-full-audit-log)
+- [Ping: AGENTS.md compliance check](#ping-agentsmd-compliance-check)
+- [How it works](#how-it-works)
+- [Privacy](#privacy)
+- [Feedback](#feedback)
+
+</details>
+
+---
+
 ## Features
 
 - **Scorecard** — a session quality report: tool success rate, prompt clarity, token waste, and actionable improvement suggestions
 - **Timeline** — a full chronological audit log of every tool call, token cost, and agent decision
 - **Instruction compliance** — tracks whether agents follow `AGENTS.md` instructions turn-by-turn, giving you a measurable signal where you'd otherwise have none
-
----
-
-## What is ARX?
-
-ARX is a session recorder for AI-assisted development. It sits quietly in the background while you work with Claude Code, Cursor, Codex, or Copilot — capturing the full picture: what you prompted, what the model decided, which tools it called, and where things went sideways.
-
-When the session ends, ARX turns that into structured reports you can act on.
-
-**Works with:** Claude Code · OpenAI Codex · Cursor · GitHub Copilot
 
 ---
 
@@ -138,40 +165,6 @@ To enable, add to your project's `AGENTS.md`:
 ```markdown
 At the end of every turn, run: arx ping --reason "<brief summary of what you did>"
 ```
-
----
-
-## Install
-
-```bash
-curl -fsSL https://get-arx.ber.run/install | bash
-```
-
-Installs the `arx` binary to `~/.local/bin` (or the first writable directory on your `PATH`).
-
-Available on **Linux**, **macOS**, and **Windows**.
-
-**The installer auto-detects your tools.** It checks for Claude Code, Cursor, and Codex, and automatically configures hook integrations for each one it finds. No manual config required — just run the install command and start working.
-
-To remove ARX and all its hooks cleanly:
-
-```bash
-arx uninstall
-```
-
----
-
-## Quickstart
-
-1. Run the install command above
-2. Use your AI tools as normal — ARX records in the background
-3. When you're done, run `arx timeline` to see what happened
-
-```bash
-arx timeline
-```
-
-That's it. ARX never blocks or modifies your sessions. If a hook fails for any reason, it fails silently and logs in the background.
 
 ---
 
