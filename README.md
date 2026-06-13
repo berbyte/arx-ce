@@ -24,7 +24,7 @@
 </div>
 
 > [!WARNING]
-> **ARX is currently in private beta.** The parser has been tested against 1794 sessions, but your patterns will likely surface edge cases we haven't seen yet. Bugs at this stage are expected and useful — please [report them here](https://github.com/berbyte/arx-community/issues/new/choose).
+> **ARX is currently in private beta.** The parser has been tested against 1794 sessions, but your patterns will likely surface edge cases we haven't seen yet. Bugs at this stage are expected and useful please [report them here](https://github.com/berbyte/arx-community/issues/new/choose).
 
 ---
 
@@ -34,7 +34,7 @@ AI is writing more of your code every day. But the moment the session ends, the 
 
 You see the diff. You don't see why the model made the choices it did, which prompts sent it in the wrong direction, where it spun its wheels retrying the same failing tool call, or how many tokens you burned on context it already had.
 
-Git records what changed. Nothing records how it got there — until now.
+Git records what changed. Nothing records how it got there until now.
 
 ARX hooks into your AI tool's session context and captures everything: every prompt, every tool call, every decision, every token. When the session ends, it turns that into structured reports you can act on.
 
@@ -94,9 +94,9 @@ arx uninstall
 
 ## Features
 
-- **Scorecard** — a session quality report: tool success rate, prompt clarity, token waste, and actionable improvement suggestions
-- **Timeline** — a full chronological audit log of every tool call, token cost, and agent decision
-- **Instruction compliance** — tracks whether agents follow `AGENTS.md` instructions turn-by-turn, giving you a measurable signal where you'd otherwise have none
+- **Scorecard** a session quality report: tool success rate, prompt clarity, token waste, and actionable improvement suggestions
+- **Timeline** a full chronological audit log of every tool call, token cost, and agent decision
+- **Instruction compliance** tracks whether agents follow `AGENTS.md` instructions turn-by-turn, giving you a measurable signal where you'd otherwise have none
 
 ---
 
@@ -106,12 +106,12 @@ arx uninstall
   <img src="docs/assets/scorecard.svg" alt="ARX Scorecard" width="600">
 </div>
 
-The Scorecard gives you a high-level view of how a session went — at a glance, without reading through logs.
+The Scorecard gives you a high-level view of how a session went at a glance, without reading through logs.
 
-- **Execution** — how many tool calls were made, how many failed, and how time split between thinking and doing
-- **Prompt quality** — scored ratings for clarity, scope drift, requirement changes, and context resets
-- **Cost efficiency** — where tokens were wasted: duplicate reads, unnecessary calls, bloated context, and how much of the output you actually kept
-- **Insights** — what you did well and concrete suggestions to get better results next time
+- **Execution** how many tool calls were made, how many failed, and how time split between thinking and doing
+- **Prompt quality** scored ratings for clarity, scope drift, requirement changes, and context resets
+- **Cost efficiency** where tokens were wasted: duplicate reads, unnecessary calls, bloated context, and how much of the output you actually kept
+- **Insights** what you did well and concrete suggestions to get better results next time
 
 Run it on any branch:
 
@@ -129,10 +129,10 @@ arx scorecard
 
 The Timeline is a full audit log of every action the agent took, in chronological order.
 
-- **Every tool call, permission request, and sub-agent** — one meaningful event per line
-- **Token spend per prompt block** — with USD cost, so you can see exactly where the bill comes from
-- **Context window utilization** — see how close each prompt came to the limit
-- **Session statistics** — duration, model used, permission mode, tool call counts by phase
+- **Every tool call, permission request, and sub-agent** one meaningful event per line
+- **Token spend per prompt block** with USD cost, so you can see exactly where the bill comes from
+- **Context window utilization** see how close each prompt came to the limit
+- **Session statistics** duration, model used, permission mode, tool call counts by phase
 
 Where the Scorecard tells you *what*, the Timeline tells you *why* and *how*. Use it when something went wrong and you need to understand the sequence of events.
 
@@ -149,9 +149,9 @@ arx timeline --raw  # compact audit log, one event per line
   <img src="docs/assets/ping.svg" alt="ARX Ping" width="600">
 </div>
 
-Instructions in `AGENTS.md` are not always followed — and there's no built-in way to know which sessions or turns skipped them.
+Instructions in `AGENTS.md` are not always followed and there's no built-in way to know which sessions or turns skipped them.
 
-ARX tracks this with a lightweight ping mechanism. Add a single line to your `AGENTS.md` telling the agent to call `arx ping` at the end of each turn. ARX produces a per-turn compliance report and, over time, a per-model compliance rate — so you can see that a specific model version honors AGENTS.md in 80% of sessions and draw conclusions about how reliably it follows your other instructions.
+ARX tracks this with a lightweight ping mechanism. Add a single line to your `AGENTS.md` telling the agent to call `arx ping` at the end of each turn. ARX produces a per-turn compliance report and, over time, a per-model compliance rate so you can see that a specific model version honors AGENTS.md in 80% of sessions and draw conclusions about how reliably it follows your other instructions.
 
 ```bash
 arx ping                          # show compliance report for the current branch
@@ -164,13 +164,13 @@ To enable, add to your project's `AGENTS.md`:
 At the end of every turn, run: arx ping --reason "<brief summary of what you did>"
 ```
 
-**Why not a hook?** A `Stop` hook would fire automatically on every turn, giving you 100% compliance trivially — and no signal at all. The point is that the agent must choose to call it by following the AGENTS.md instruction. Missed pings are still caught: ARX already tracks turn boundaries and file edits via deterministic hooks. If files changed in a turn window but no ping was recorded, the miss is detected regardless of whether the agent reported it.
+**Why not a hook?** A `Stop` hook would fire automatically on every turn, giving you 100% compliance trivially and no signal at all. The point is that the agent must choose to call it by following the AGENTS.md instruction. Missed pings are still caught: ARX already tracks turn boundaries and file edits via deterministic hooks. If files changed in a turn window but no ping was recorded, the miss is detected regardless of whether the agent reported it.
 
 ---
 
 ## How it works
 
-ARX hooks into your AI tool's session context — not your IDE, not your network traffic — and records the structured data that your tools already produce.
+ARX hooks into your AI tool's session context not your IDE, not your network traffic and records the structured data that your tools already produce.
 
 After the session, it uses your local AI tools to evaluate and summarize what happened. Nothing leaves your machine except your email and GitHub username, which are submitted once at install time so we know who's in the beta.
 
@@ -180,7 +180,7 @@ After the session, it uses your local AI tools to evaluate and summarize what ha
 
 Your work stays on your machine.
 
-ARX **never** transmits your code, diffs, prompts, tokens, secrets, or API keys — to us or anyone else. Prompt analysis runs entirely through your local AI tools, which already hold that data. ARX only reads the structured session files those tools produce; it does not proxy, intercept, or mirror any network traffic.
+ARX **never** transmits your code, diffs, prompts, tokens, secrets, or API keys to us or anyone else. Prompt analysis runs entirely through your local AI tools, which already hold that data. ARX only reads the structured session files those tools produce; it does not proxy, intercept, or mirror any network traffic.
 
 What ARX does send externally:
 
@@ -199,7 +199,7 @@ auto_update: disable
 
 Once disabled, ARX makes no outbound connections of its own.
 
-For a full hardened setup — including blocking all network access at the OS level with AppArmor, Windows Firewall, or macOS tools — see [docs/paranoid-setup.md](docs/paranoid-setup.md).
+For a full hardened setup including blocking all network access at the OS level with AppArmor, Windows Firewall, or macOS tools see [docs/paranoid-setup.md](docs/paranoid-setup.md).
 
 Other protections:
 
@@ -215,6 +215,6 @@ Found a bug? [Open an issue](https://github.com/berbyte/arx-community/issues/new
 
 Have a question or idea? [Start a discussion](https://github.com/berbyte/arx-community/discussions)
 
-Security issue? Email [dominis@ber.run](mailto:dominis@ber.run) — do not open a public issue.
+Security issue? Email [dominis@ber.run](mailto:dominis@ber.run) do not open a public issue.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
