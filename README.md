@@ -72,6 +72,8 @@ To remove ARX and all its hooks cleanly:
 arx uninstall
 ```
 
+New to ARX? [docs/quickstart.md](docs/quickstart.md) walks through what just happened and what to run next.
+
 ---
 
 <details>
@@ -87,6 +89,7 @@ arx uninstall
 - [How it works](#how-it-works)
 - [Privacy](#privacy)
 - [Feedback](#feedback)
+- [Full documentation](docs/README.md)
 
 </details>
 
@@ -106,18 +109,13 @@ arx uninstall
   <img src="docs/assets/scorecard.svg" alt="ARX Scorecard" width="600">
 </div>
 
-The Scorecard gives you a high-level view of how a session went at a glance, without reading through logs.
-
-- **Execution** how many tool calls were made, how many failed, and how time split between thinking and doing
-- **Prompt quality** scored ratings for clarity, scope drift, requirement changes, and context resets
-- **Cost efficiency** where tokens were wasted: duplicate reads, unnecessary calls, bloated context, and how much of the output you actually kept
-- **Insights** what you did well and concrete suggestions to get better results next time
-
-Run it on any branch:
+A high-level view of how a session went at a glance: execution (tool calls, failures, time split), prompt quality, cost efficiency, and concrete insights to improve the next session. Run it on any branch:
 
 ```bash
 arx scorecard
 ```
+
+**Full reference:** [docs/scorecard.md](docs/scorecard.md)
 
 ---
 
@@ -127,19 +125,13 @@ arx scorecard
   <img src="docs/assets/timeline.svg" alt="ARX Timeline" width="600">
 </div>
 
-The Timeline is a full audit log of every action the agent took, in chronological order.
-
-- **Every tool call, permission request, and sub-agent** one meaningful event per line
-- **Token spend per prompt block** with USD cost, so you can see exactly where the bill comes from
-- **Context window utilization** see how close each prompt came to the limit
-- **Session statistics** duration, model used, permission mode, tool call counts by phase
-
-Where the Scorecard tells you *what*, the Timeline tells you *why* and *how*. Use it when something went wrong and you need to understand the sequence of events.
+A full chronological audit log of every tool call, permission request, and sub-agent — with token cost and context window usage per prompt block. Where the Scorecard tells you *what*, the Timeline tells you *why* and *how*.
 
 ```bash
-arx timeline        # default view with scorecard + event log
-arx timeline --raw  # compact audit log, one event per line
+arx timeline
 ```
+
+**Full reference:** [docs/timeline.md](docs/timeline.md)
 
 ---
 
@@ -149,59 +141,25 @@ arx timeline --raw  # compact audit log, one event per line
   <img src="docs/assets/ping.svg" alt="ARX Ping" width="600">
 </div>
 
-Instructions in `AGENTS.md` are not always followed and there's no built-in way to know which sessions or turns skipped them.
+Instructions in `AGENTS.md` are not always followed, and there's no built-in way to know which sessions or turns skipped them. ARX tracks this with a lightweight ping mechanism the agent calls at the end of each turn, giving you a per-model compliance rate over time. Wired in automatically at install — nothing to add to your own `AGENTS.md`.
 
-ARX tracks this with a lightweight ping mechanism: the agent calls `arx ping` at the end of each turn. ARX produces a per-turn compliance report and, over time, a per-model compliance rate so you can see that a specific model version honors AGENTS.md in 80% of sessions and draw conclusions about how reliably it follows your other instructions.
-
-```bash
-arx ping                          # show compliance report for the current branch
-arx ping --reason "what I did"    # record a ping (called by the AI at end of turn)
-```
-
-The instruction to call `arx ping` is wired in automatically through your user-level `CLAUDE.md`/`AGENTS.md` during install, so there's nothing to add to your project's own `AGENTS.md`.
-
-**Why not a hook?** A `Stop` hook would fire automatically on every turn, giving you 100% compliance trivially and no signal at all. The point is that the agent must choose to call it by following the AGENTS.md instruction. Missed pings are still caught: ARX already tracks turn boundaries and file edits via deterministic hooks. If files changed in a turn window but no ping was recorded, the miss is detected regardless of whether the agent reported it.
+**Full reference:** [docs/ping.md](docs/ping.md)
 
 ---
 
 ## How it works
 
-ARX hooks into your AI tool's session context not your IDE, not your network traffic and records the structured data that your tools already produce.
+ARX hooks into your AI tool's session context — not your IDE, not your network traffic — and records the structured data that your tools already produce. After the session, it uses your local AI tools to evaluate and summarize what happened. Nothing leaves your machine except your email and GitHub username, submitted once at install time so we know who's in the beta.
 
-After the session, it uses your local AI tools to evaluate and summarize what happened. Nothing leaves your machine except your email and GitHub username, which are submitted once at install time so we know who's in the beta.
+**Full reference:** [docs/how-it-works.md](docs/how-it-works.md)
 
 ---
 
 ## Privacy
 
-Your work stays on your machine.
+Your work stays on your machine. ARX **never** transmits your code, diffs, prompts, tokens, secrets, or API keys to us or anyone else — prompt analysis runs entirely through your local AI tools, which already hold that data.
 
-ARX **never** transmits your code, diffs, prompts, tokens, secrets, or API keys to us or anyone else. Prompt analysis runs entirely through your local AI tools, which already hold that data. ARX only reads the structured session files those tools produce; it does not proxy, intercept, or mirror any network traffic.
-
-What ARX does send externally:
-
-| What | When | Why |
-|------|------|-----|
-| Email + GitHub username | Once, at install time | Beta registration |
-| Version check request | Hourly (auto-update) | Keeps the binary current |
-
-**Disabling auto-update**
-
-Add this to `~/.arx/config.yaml`:
-
-```yaml
-auto_update: disable
-```
-
-Once disabled, ARX makes no outbound connections of its own.
-
-For a full hardened setup including blocking all network access at the OS level with AppArmor, Windows Firewall, or macOS tools see [docs/paranoid-setup.md](docs/paranoid-setup.md).
-
-Other protections:
-
-- No network traffic interception or IDE proxying
-- No raw screen or keystroke capture
-- Session data is stored encrypted at rest ([AES-256-GCM](https://github.com/berbyte/cryptlite))
+**Full reference:** [docs/privacy.md](docs/privacy.md) · [docs/paranoid-setup.md](docs/paranoid-setup.md) for blocking all network access at the OS level.
 
 ---
 
