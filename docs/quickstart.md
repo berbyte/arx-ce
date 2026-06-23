@@ -14,13 +14,16 @@ Nothing about your code, prompts, or tokens leaves your machine. See [Privacy](p
 
 ## How this works with git branches
 
-> **Note:** this section describes intended behavior from a docs-writing pass against the public README. If anything here doesn't match what you see running `arx scorecard` on different branches, treat the running binary as correct and tell us — this page will get fixed.
+By default, ARX treats the git branch as the unit of work. As it collects events from your AI tool, it attaches them to whatever branch is currently checked out. Later, when you run `arx scorecard`, `arx timeline`, or `arx ping`, they aggregate every session from every tool onto the current branch — so switching branches changes which sessions you see.
 
-Reports are scoped to the branch you're on. Sessions you run while working on `feature/foo` show up when you run `arx scorecard` or `arx timeline` from that branch; switch to `main` or another feature branch and you get that branch's sessions instead. In practice this means:
+> **Known issue:** on the default branch (e.g. `main`) or in a directory with no git repo, ARX still collects everything, but aggregation doesn't happen — `arx scorecard`, `arx timeline`, and `arx ping` only show the last session instead of the full set. We're working on fixing this.
+
+In practice this means:
 
 - Keep working in branches the way you already do — one branch per feature/fix.
 - When a feature is done, run the report from that branch, before you merge or delete it, to review the AI sessions that produced it.
 - You don't need to remember to "start" or "stop" tracking anything per branch — just check out the branch and run the command.
+- If you're on `main` or outside a git repo, expect to see only the latest session rather than an aggregated view, until this is fixed.
 
 ## What to run
 
