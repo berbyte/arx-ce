@@ -24,7 +24,7 @@
 </div>
 
 > [!WARNING]
-> **ARX is currently in private beta.** The parser has been tested against 9636 sessions, but your patterns will likely surface edge cases we haven't seen yet. Bugs at this stage are expected and useful please [report them here](https://github.com/berbyte/arx-community/issues/new/choose).
+> **ARX is currently in private beta.** The parser has been tested against 1636 sessions, but your patterns will likely surface edge cases we haven't seen yet. Bugs at this stage are expected and useful please [report them here](https://github.com/berbyte/arx-community/issues/new/choose).
 
 ---
 
